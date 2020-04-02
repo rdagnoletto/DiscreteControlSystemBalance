@@ -1,0 +1,59 @@
+/* ==== USER INTERFACE TEMPLATE ==== */
+/*  Insert below the code for your scaling, saturation block, and controllers.
+For a demo, a simple sine wave is applied to the motor in open loop (Auto/Manual switch should be in Auto)*/
+
+/*  Variables may be declared on the box border, as shown for the input 
+ "T" and the output "BallPosn". Variables can also be declared inline as was done for "Temp1". */
+
+float  temp1  ;
+float temp2;
+
+/*  Shift registers permit previous values of variables to be saved. The output variable "e" is wired to a shift register input on the For Loop border.  The inputs "e1" and "e2"are wired  to the corresponding shift register outputs. "e1" holds the value of "e" from the previous iteration and "e2" holds the value of "e1" from  the previous iteration. */
+
+/* Place your SENSOR SCALING here */
+/* NO scaling is provided for this demo */
+BallPosn = posV;  /* V to V, for the demo */
+ServoAng = -1.54*(angV - 0.39);   /* V to V, for the demo */
+
+/* SCALING end */
+
+if (L  < 3) /* all shift registers cleared after 3rd iteration */
+   {u = e = ThRef = posV= 0;}
+else
+{
+if (Man)    /*manual motor voltage control*/
+   {   u = MotV;}
+    else     /*control algorithm*/
+   { 
+/* CAUTION: be sure to NOT load the output of a nonlinear block (e.g., saturator, offset) into a SHIFT REGISTER, to avoid introducing an nonlinearity into your controller. Instead, define separate variables for this purpose.*/
+/* Place your outer loop BALL POSITION CONTROLLER below */
+
+/* Place your gear angle SATURATOR below */
+
+/* Place your inner loop GEAR ANGLE CONTROLLER below */
+/* For a demo, we wish to apply a sinusoidal voltage to the motor. You could accomplish that with this equation:
+u = 0.5*sin(2*3.14*0.5*L*Tms/1000+0.3);
+However, this would be computationally intensive. Instead, the values could be pre-calculated and stored into a reference file, accessed through the variable "r". Use Sine.ref file for this purpose. */
+if (r > 0.7)
+{
+r = 0.7;
+}
+if (r < -0.7)
+{
+r = -0.7;
+}
+temp1 = r - ServoAng ;
+temp2 =  -4* temp1;
+if (temp2 < -5)
+{ 
+temp2 = -5;
+}
+if (temp2 > 5)
+{
+temp2 = 5;
+}
+u = temp2;
+   }
+} 
+    
+/* ThRef, ThRef1, e, e1 are present, but not used in this demo.  However, they will be necessary (at a minimum) when the controllers will be implemented. */
